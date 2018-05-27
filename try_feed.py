@@ -4,6 +4,7 @@ import mongoengine
 import telethon
 import time
 import os
+from alchemysession import AlchemySessionContainer
 
 
 
@@ -18,6 +19,9 @@ API_HASH = os.environ.get("API_HASH")
 USERNAME = os.environ.get("USERNAME")
 CHANNEL_URL = os.environ.get("CHANNEL_URL")
 
+
+container = AlchemySessionContainer(os.environ.get('DATABASE'))
+session = container.new_session('some session id')
 
 mongoengine.connect(MONGODB_NAME, host=MONGODB_HOST)
 
@@ -35,7 +39,7 @@ class Item(mongoengine.Document):
         return self.title
 
 while True:
-    t_client = telethon.TelegramClient('session', API_ID, API_HASH )
+    t_client = telethon.TelegramClient(session, API_ID, API_HASH )
     t_client.start()
 
     channel = t_client.get_entity(CHANNEL_URL)
