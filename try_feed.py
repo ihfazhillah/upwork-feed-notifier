@@ -20,7 +20,7 @@ USERNAME = os.environ.get("USERNAME")
 CHANNEL_URL = os.environ.get("CHANNEL_URL")
 
 
-container = AlchemySessionContainer(os.environ.get('DATABASE'))
+container = AlchemySessionContainer(os.environ.get('DATABASE_URL'))
 session = container.new_session('some session id')
 
 mongoengine.connect(MONGODB_NAME, host=MONGODB_HOST)
