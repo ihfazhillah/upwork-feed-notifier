@@ -4,7 +4,24 @@ import mongoengine
 import telethon
 import time
 import os
+import re
 from alchemysession import AlchemySessionContainer
+
+
+def convert_to_mobile_url(url_orig, client_id):
+    """
+
+    :param url_orig:  original url from feed
+    :param client_id:  client_id for current user
+    :return: mobile url
+    """
+
+    pattern = r".*_%7E(?P<job_id>\w+)\?.*"
+    sub_string = "https://www.upwork.com/mobile/c/%s/jobs/_~\g<job_id>" % client_id
+
+    result = re.sub(pattern, sub_string, url_orig)
+
+    return result
 
 
 
@@ -18,6 +35,9 @@ API_HASH = os.environ.get("API_HASH")
 
 USERNAME = os.environ.get("USERNAME")
 CHANNEL_URL = os.environ.get("CHANNEL_URL")
+
+# client id for upwork
+CLIENT_ID = os.environ.get("CLIENT_ID")
 
 
 container = AlchemySessionContainer(os.environ.get('DATABASE_URL'))
@@ -54,6 +74,7 @@ while True:
         # loop through items
         try:
             for item in resp.entries:
+
                 found = Item.objects(guid=item.guid)
 
 
@@ -64,9 +85,13 @@ while True:
                                    )
                     to_save.save()
 
+
+
                     message = "###################\n\n\n"
                     message += "<b>" + to_save.title + "</b>\n\n\n"
                     message += to_save.description.replace("<br>", "\n").replace("<br/>", "\n").replace("<br />", "\n").replace("<br >", "\n")
+                    message += "\n\n"
+                    message += "<a href='%s'>click for mobile</a>" % convert_to_mobile_url(item.guid, client_id)
                     message += "##################"
 
                     t_client.send_message(channel, html.unescape(message), parse_mode="html", link_preview=False)
