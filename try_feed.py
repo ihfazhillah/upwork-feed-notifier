@@ -99,7 +99,8 @@ while True:
                     time.sleep(5)
         except KeyError:
             t_client.send_message(USERNAME, "ada error di url " + url.url)
-            t_client.send_message(USERNAME, "please check".send_message(USERNAME, "```" + resp.content + "```")
+            t_client.send_message(USERNAME, "please check")
+            t_client.send_message(USERNAME, "```" + resp.content + "```")
         except Exception as e:
             t_client.send_message(USERNAME, "another error, please check the script")
             t_client.send_message(USERNAME, "```" + str(e) + "```")
